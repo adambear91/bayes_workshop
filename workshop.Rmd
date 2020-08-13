@@ -1,0 +1,18 @@
+---
+title: "Bayes Workshop"
+date: "8/31/2020"
+output: 
+    html_document:
+        toc: true
+        theme: readable
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
+library(tidyverse)
+theme_set(theme_bw())
+```
+
+## What's a model?
+
+
