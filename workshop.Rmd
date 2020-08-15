@@ -16,14 +16,22 @@ source("cake_model.R", local = TRUE)
 
 How should we update our beliefs in the face of uncertain evidence? How should perceptual systems incorporate information from the world to construct the best picture of reality? How should statistical models
 
+### Coin flips
+
+```{r}
+
+```
+
+
+
 ```{r, fig.align='center', fig.height=4, fig.width=5}
-print(cake_lik_plot)
+cake_lik_plot
 ```
 
 New plot below...
 
 ```{r, fig.align='center', fig.height=4, fig.width=5}
-print(cake_posterior_plot)
+cake_posterior_plot
 ```
 
 ## Likelihood functions
