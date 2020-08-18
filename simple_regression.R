@@ -2,6 +2,11 @@ set.seed(314)
 library(tidyverse)
 theme_set(theme_bw())
 
+
+#troll
+
+
+
 n <- 20 # number of data points
 xmin <- -3
 xmax <- 3
