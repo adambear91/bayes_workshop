@@ -15,11 +15,13 @@ theme_set(theme_bw())
 ## Likelihood ##
 # p(x days passed | eventual response) = 1 - Weibull CDF
 # p(x days passed | no eventual response) = 1
+weib_shape <- .5
+weib_scale <- 21
 
 results <- tibble(days_passed = 0:400) %>% # data for time without a response
    mutate(
       # scale and shape for Weibull give median ~10 days wait time
-      likelihood_response = 1 - pweibull(days_passed, shape = .5, scale = 21),
+      likelihood_response = 1 - pweibull(days_passed, weib_shape, weib_scale),
       likelihood_noresponse = 1
    )
 
@@ -36,7 +38,7 @@ results %>%
    scale_x_continuous("Days without Response (Data)") +
    scale_y_continuous("Probability of Not Receiving Response") +
    scale_color_discrete("Will they ever respond?", labels = c("No", "Yes")) +
-   theme(legend.position = "bottom")
+   theme(legend.position = "bottom", legend.box.margin = margin(-10, -10, -10, -10))
 
 ## Prior ##
 p_response <- .75 # prior that you'll get eventual response
@@ -52,7 +54,7 @@ results_simple <- results %>%
    )
 
 # Plot posterior as a function of days passed
-results_simple %>%
+posterior_simple_plot <- results_simple %>%
    select(-starts_with("likelihood")) %>%
    pivot_longer(
       starts_with("posterior"),
@@ -65,7 +67,7 @@ results_simple %>%
    scale_y_continuous("Posterior Belief in Eventual Outcome") +
    scale_color_discrete("Will they ever respond?", labels = c("No", "Yes")) +
    labs(caption = str_c("Prior belief in eventual response: ", 100*p_response, "%")) +
-   theme(legend.position = "bottom")
+   theme(legend.position = "bottom", legend.box.margin = margin(-10, -10, -10, -10))
 
 
 #### Alternative Model ####
@@ -89,7 +91,7 @@ results_alt <- results %>%
    ) %>%
    mutate(posterior = posterior / normalization)
 
-ggplot(results_alt, aes(days_passed, posterior, color = outcome)) +
+posterior_alt_plot <- ggplot(results_alt, aes(days_passed, posterior, color = outcome)) +
    geom_line(size = 1) +
    scale_x_continuous("Days without Response (Data)") +
    scale_y_continuous("Posterior Belief", limits = c(0, 1)) +

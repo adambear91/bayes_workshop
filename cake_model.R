@@ -1,4 +1,5 @@
 library(tidyverse)
+library(latex2exp)
 theme_set(theme_bw())
 
 ## Assumptions ##
@@ -33,11 +34,11 @@ results <- params %>%
 cake_lik_plot <- ggplot(results, aes(b_chocolate, likelihood, color = has_lactose, linetype = has_lactose)) +
    geom_line(size = 1) +
    geom_vline(xintercept = 1, linetype = "dashed", alpha = .5) +
-   scale_x_continuous("Preference for Chocolate vs. Non-chocolate Desserts") +
+   scale_x_continuous(TeX("Preference for Chocolate Desserts ($b_c$)")) +
    scale_y_continuous("Probability of Eating Chocolate Dessert", limits = c(0, 1)) +
    scale_color_discrete("Has lactose?", labels = c("No", "Yes")) +
    scale_linetype_discrete("Has lactose?", labels = c("No", "Yes")) +
-   theme(legend.position = "bottom")
+   theme(legend.position = "bottom", legend.box.margin = margin(-10, -10, -10, -10))
 
 ## Prior ##
 p_has_lactose <- .8
@@ -58,7 +59,7 @@ cake_posterior_plot <- results %>%
    ggplot(aes(b_chocolate, value, color = has_lactose, linetype = has_lactose)) +
    geom_line(size = 1) +
    facet_wrap(vars(quantity), labeller = as_labeller(str_to_title)) +
-   scale_x_continuous("Preference for Chocolate vs. Non-chocolate Desserts") +
+   scale_x_continuous(TeX("Preference for Chocolate Desserts ($b_c$)")) +
    scale_y_continuous("Probability", breaks = NULL) +
    scale_color_discrete("Has lactose?", labels = c("No", "Yes")) +
    scale_linetype_discrete("Has lactose?", labels = c("No", "Yes")) +
@@ -66,5 +67,6 @@ cake_posterior_plot <- results %>%
       "Prior dessert contains lactose: ", 100*p_has_lactose, "%, ",
       "Posterior dessert contains lactose: ", with(results, 100*sum(posterior[has_lactose])) %>% round(), "%"
    )) +
-   theme(legend.position = "bottom", plot.caption = element_text(hjust = .5))
+   theme(legend.position = "bottom", legend.box.margin = margin(-10, -10, -10, -10),
+         plot.caption = element_text(hjust = .5))
 

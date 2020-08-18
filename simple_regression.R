@@ -98,4 +98,4 @@ reg_fit <- ggplot(data, aes(x, y)) +
    ) +
    scale_y_continuous("Shower Temperature", limits = c(95, 115)) +
    scale_color_discrete(element_blank()) +
-   theme(legend.position = "bottom")
+   theme(legend.position = "bottom", legend.box.margin = margin(-10, -10, -10, -10))
