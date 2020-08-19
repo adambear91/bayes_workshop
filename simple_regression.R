@@ -54,6 +54,20 @@ sd_b0 <- 5
 mean_b1 <- 0
 sd_b1 <- .5
 
+prior_plot <- tibble(
+   x = c(90:120, seq(-2, 2, .1)),
+   p = c(
+      dnorm(90:120, mean_b0, sd_b0) / sum(dnorm(90:120, mean_b0, sd_b0)),
+      dnorm(seq(-2, 2, .1), mean_b1, sd_b1) / sum(dnorm(seq(-2, 2, .1), mean_b1, sd_b1))
+   ),
+   type = c(rep("Intercept", length(90:120)), rep("Slope", length(seq(-2, 2, .1))))
+) %>%
+   ggplot(aes(x, p)) +
+   geom_line(size = 1) +
+   facet_wrap(vars(type), scales = "free_x") +
+   scale_y_continuous(element_blank(), breaks = NULL) +
+   xlab(element_blank())
+
 ## Posterior ##
 results <- results %>%
    mutate(
