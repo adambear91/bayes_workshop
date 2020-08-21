@@ -1,4 +1,3 @@
-
 library(tidyverse)
 library(brms)
 library(cowplot)
@@ -12,7 +11,8 @@ set.seed(42)
 df <- read_rds("trump_data.rds")
 head(df)
 
-# This data comes from an experiment in which US subjects gave their opinion on 10 policy questions (the paper is here https://doi.org/10.1017/S0003055418000795 )
+# This data comes from an experiment in which US subjects gave their opinion on 10 policy questions
+#   (the paper is here https://doi.org/10.1017/S0003055418000795 )
 # Before giving their opinion on any questions they were randomly assigned to a treatment or control condition
 # In the treatment group the subjects were told the policy position of Donald Trump when asked for their own opinion
 # In the control group Trump's position was not provided
@@ -32,14 +32,14 @@ unique(df$Question) # these are the 10 policy question issues
 # Are Republican subjects more likely to respond conservatively on the question of gun background checks when they learn Trump's position?
 # In other words do they follow his cue, and to what extent?
 
-# Get the data
-df_gb <- 
+# Filter the data to just Republicans answering the background-check question
+df_gb <-
   df %>%
   filter(Question == "Guns_Background", republican == 1)
 
 # Fit model
 fit_gb <- brm(data = df_gb,
-              family = gaussian, 
+              family = gaussian,
               # note that we follow the authors of the paper by using the Gaussian family with a binary outcome, so this is a "linear probability model"
               # there is an active debate about the advantages and disadvantages of LPMs vs. logistic models for binary data
               # e.g. https://psyarxiv.com/4gmbv/ and https://www.alexpghayes.com/blog/consistency-and-the-linear-probability-model/
@@ -48,7 +48,7 @@ fit_gb <- brm(data = df_gb,
                         prior(normal(0, 0.5),   class = b),
                         prior(exponential(1),   class = sigma)),
               iter = 3000, warmup = 1000, chains = 4, cores = 4, seed = 42,
-              file = "fit_gb")
+              file = "models/fit_gb")
 
 # > Diagnostics ####
 summary(fit_gb) # get model summary
@@ -85,8 +85,8 @@ samples_gb %>%
 # Extending to the multilevel case ####
 # Now we are interested in estimating the average treatment effect of the Trump cue across all 10 policy questions, which we can do with a multilevel model
 
-# Get the data
-df_multilevel <- 
+# Get the Republican data
+df_multilevel <-
   df %>%
   filter(republican == 1)
 
@@ -101,15 +101,15 @@ fit_multilevel <- brm(data = df_multilevel,
                                 prior(exponential(5),   class = sd), # this prior is on the SD of the intercept and slope among the clusters of caseid and Question
                                 prior(lkj(2),           class = cor)), # this prior is on the correlation between the intercept and slope in the cluster of Question
                       iter = 3000, warmup = 1000, chains = 4, cores = 4, seed = 42,
-                      file = "fit_multilevel")
+                      file = "models/fit_multilevel")
 
 # Diagnostics and summary
 summary(fit_multilevel)
 plot(fit_multilevel)
 
 # Extract posterior samples
-samples_multilevel <- 
-  fit_multilevel %>% 
+samples_multilevel <-
+  fit_multilevel %>%
   spread_draws(b_contrump, # get the fixed effect samples (these are samples of the overall treatment effect)
                r_Question[Question, parameter]) %>% # get the corresponding random effects samples (these are samples of the effects specific to each question)
   ungroup()
@@ -121,7 +121,7 @@ samples_ml_summary <-
   samples_multilevel %>%
   filter(parameter == "contrump") %>%
   mutate(r_Question_scale = b_contrump + r_Question) %>% # we must add the question random effects to the fixed effect to get the former on the proper scale
-  group_by(Question) %>% 
+  group_by(Question) %>%
   mean_hdi(r_Question_scale, .width = 0.95)
 
 # Plot
@@ -132,7 +132,7 @@ samples_ml_summary %>%
   geom_errorbar(aes(ymin = .lower, ymax = .upper), width = 0) +
   geom_hline(yintercept = 0, linetype = "dashed", color = "red") +
   geom_hline(yintercept = mean(samples_multilevel$b_contrump)) + # plots line for average effect
-  labs(x = "", y = "ATE")
+  labs(x = "", y = "Average Treatment Effect")
 
 # Multilevel shrinkage: in the multilevel model the estimate of the average treatment effect for the background checks question is closer to zero
 # This is because our estimates on the other questions help to inform our estimate on the background checks question (and the former are closer to zero)

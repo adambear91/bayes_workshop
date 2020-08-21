@@ -1,4 +1,3 @@
-
 # Load libraries and set plot theme
 library(tidyverse)
 library(brms)
@@ -25,7 +24,7 @@ plot(data$x, data$y)
 # Standardise the predictor variable ####
 data$x_std <- as.numeric(scale(data$x, scale = T, center = T))
 
-# Fit OLS regression
+# For comparison purposes, fit OLS regression
 fit_ols <- lm(y ~ x_std, data = data)
 summary(fit_ols)
 
@@ -41,7 +40,7 @@ fit_bayes <- brm(data = data,
                  chains = 4, # number of chains
                  cores = 4, # number of cores to use, limited by the hardware you are using
                  seed = 42,
-                 file = "fit_temp") # this saves the model fit to your working directory with the quoted name
+                 file = "models/fit_temp") # this saves the model fit to your working directory with the quoted name
 
 # Visualising the priors ####
 curve(from = 70, to = 140, dnorm(x, 105, 5))
