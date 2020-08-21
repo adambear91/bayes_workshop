@@ -43,6 +43,11 @@ fit_bayes <- brm(data = data,
                  seed = 42,
                  file = "fit_temp") # this saves the model fit to your working directory with the quoted name
 
+# Visualising the priors ####
+curve(from = 70, to = 140, dnorm(x, 105, 5))
+curve(from = -4, to = 4, dnorm(x, 0, 1))
+curve(from = 0, to = 10, dexp(x, 0.33))
+
 # Diagnostics ####
 summary(fit_bayes) # get model summary
 plot(fit_bayes) # traceplot
