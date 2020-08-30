@@ -52,6 +52,9 @@ summary(fit_bayes) # get model summary
 plot(fit_bayes) # traceplot
 pp_check(fit_bayes) # posterior predictive check
 
+# Other error messages you might get
+# Divergent transitions! https://mc-stan.org/docs/2_19/reference-manual/divergent-transitions
+
 # Get the posterior samples from the model ####
 samples <- posterior_samples(fit_bayes)
 head(samples) # inspect
