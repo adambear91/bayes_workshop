@@ -104,6 +104,8 @@ mu_at_1 <-
    samples %>%
    mutate(mu_at_1 = b_Intercept + b_x_std * 1) # remember the mean in our model is the sum of the intercept and slope
 
+head(mu_at_1)
+
 # Plot
 mu_at_1 %>%
    ggplot(aes(x = mu_at_1)) +

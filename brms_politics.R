@@ -12,7 +12,7 @@ df <- read_rds("trump_data.rds")
 head(df)
 
 # This data comes from an experiment in which US subjects gave their opinion on 10 policy questions
-#   (the paper is here https://doi.org/10.1017/S0003055418000795 )
+# ( the paper is here https://doi.org/10.1017/S0003055418000795 )
 # Before giving their opinion on any questions they were randomly assigned to a treatment or control condition
 # In the treatment group the subjects were told the policy position of Donald Trump when asked for their own opinion
 # In the control group Trump's position was not provided
@@ -36,6 +36,12 @@ unique(df$Question) # these are the 10 policy question issues
 df_gb <-
   df %>%
   filter(Question == "Guns_Background", republican == 1)
+
+# Plot raw data
+df_gb %>%
+   ggplot(aes(x = factor(contrump), y = Support)) +
+   geom_jitter(alpha = 0.5) +
+   stat_summary(fun.data = "mean_cl_boot", color = "red")
 
 # Fit model
 fit_gb <- brm(data = df_gb,
